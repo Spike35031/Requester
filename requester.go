@@ -4,12 +4,22 @@ import (
 	"net/http"
 	"fmt"
 	"code.google.com/p/go-sqlite/go1/sqlite3"
+	"os"
 )
 
 func main() {
-	conn, _ := sqlite3.Open(":memory:")
+	os.Remove("database.db")
+	conn, connErr := sqlite3.Open("database.db")
+	if (connErr != nil) {
+		fmt.Print(connErr)
+		panic("Failed to open connection!")
+	}
 	defer conn.Close()
-	conn.Exec("CREATE TABLE requests(id int, url VARCHAR(128)")
+	tableErr := conn.Exec("CREATE TABLE IF NOT EXISTS requests(id INT AUTO_INCREMENT, url VARCHAR(128))")
+	if (tableErr != nil) {
+		fmt.Print(tableErr)
+		panic("Failed to create table!")
+	}
 	http.HandleFunc("/request/", requestHandler)
 	http.HandleFunc("/player/", playerHandler)
 	http.ListenAndServe(":8080", nil)
@@ -20,12 +30,33 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Bad token! Talk to Ben T.")
 		return
 	}
-	conn, _ := sqlite3.Open(":memory:")
+	conn, connErr := sqlite3.Open("database.db")
+	if (connErr != nil) {
+		fmt.Print(connErr)
+		panic("Failed to open connection!")
+	}
 	defer conn.Close()
-	conn.Exec("INSERT INTO requests(url) VALUES (" + r.FormValue("text"))
+	err := conn.Exec("INSERT INTO requests VALUES ('', '" + r.FormValue("text") + "')")
+	if (err != nil) {
+		fmt.Print(err)
+		panic("Failed to save")
+	}
 	fmt.Fprintf(w, "Successfully requested %s!", r.FormValue("text"))
+	fmt.Println("request for " + r.FormValue("text") + " saved successfully")
 }
 
 func playerHandler(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("View request")
+	conn, err := sqlite3.Open("database.db")
+	if (err != nil) {
+		panic("Failed to open connection!")
+	}
+	defer conn.Close()
+	sql := "SELECT url FROM requests"
+	for s, err := conn.Query(sql); err == nil; err = s.Next() {
+		var row string
+		s.Scan(&row)
+		fmt.Fprintf(w, "<br>%s", row)
+		fmt.Println(row)
+	}
 }
