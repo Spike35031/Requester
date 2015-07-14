@@ -10,5 +10,5 @@ func main() {
 }
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(x, "Hello world!")
+	fmt.Fprintf(w, "Hello world!")
 }
