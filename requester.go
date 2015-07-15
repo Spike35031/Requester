@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 var requests []string
@@ -11,6 +12,7 @@ var requests []string
 func main() {
 	http.HandleFunc("/request/", requestHandler)
 	http.HandleFunc("/player/", playerHandler)
+	http.HandleFunc("/playlist/", playlistHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -39,6 +41,16 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 	requests = nil
 
 	playlist, _ := ioutil.ReadFile("playlist.json")
-	fmt.Fprintf(w, `], "playlist":[%s]}`, playlist)
-	
+	fmt.Fprintf(w, `], "playlist":[%s]}`, playlist)	
+}
+
+func playlistHandler(w http.ResponseWriter, r *http.Request) {
+	if (r.FormValue("token") != "fMirvlQ7N0JkKYb6wIH5VUTv") {
+		fmt.Fprintf(w, "Bad token! Talk to Ben T.")
+		return
+	}
+	f, _ := os.OpenFile("playlist.json", os.O_APPEND, 0666)
+	defer f.Close()
+	f.WriteString(`,\n"` + r.FormValue("text") + `"`)
+	fmt.Println(r.FormValue("text") + " successfully added to playlist!")
 }
