@@ -28,5 +28,5 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 
 func playerHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, `{requests":["1dcXmkco5ko"], "playlist":["XE-oMOEZ7Rc"]}`);
+	fmt.Fprintf(w, `{"requests":["1dcXmkco5ko"], "playlist":["XE-oMOEZ7Rc"]}`);
 }
