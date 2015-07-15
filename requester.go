@@ -3,24 +3,11 @@ package main
 import (
 	"net/http"
 	"fmt"
-	"os"
 )
 
 var requests []string
 
 func main() {
-	os.Remove("database.db")
-	conn, connErr := sqlite3.Open("database.db")
-	if (connErr != nil) {
-		fmt.Print(connErr)
-		panic("Failed to open connection!")
-	}
-	defer conn.Close()
-	tableErr := conn.Exec("CREATE TABLE IF NOT EXISTS requests(id INT AUTO_INCREMENT, url VARCHAR(128))")
-	if (tableErr != nil) {
-		fmt.Print(tableErr)
-		panic("Failed to create table!")
-	}
 	http.HandleFunc("/request/", requestHandler)
 	http.HandleFunc("/player/", playerHandler)
 	http.ListenAndServe(":8080", nil)
@@ -42,11 +29,14 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, `{"requests":[`)
 	for i := 0; i < len(requests); i++ {
-		fmt.Fprintf(w, `"%s"%s`, slice[i], i == len(requests) ? "" : ", ")
+		fmt.Fprintf(w, `"%s"`, requests[i])
+		if (i == len(requests) - 1) {
+			fmt.Fprintf(w, ", ")
+		}
 	}
 
 	requests = nil
-	
+
 	fmt.Fprintf(w, `], "playlist":[`)
 	fmt.Fprintf(w, `"XE-oMOEZ7Rc"`)
 	fmt.Fprintf(w, `]}`)
