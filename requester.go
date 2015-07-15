@@ -53,4 +53,5 @@ func playlistHandler(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 	f.WriteString(`,\n"` + r.FormValue("text") + `"`)
 	fmt.Println(r.FormValue("text") + " successfully added to playlist!")
+	fmt.Fprintf(w, "%s successfully added to playlist!", r.FormValue("text"))
 }
