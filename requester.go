@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"fmt"
+	"io/ioutil"
 )
 
 var requests []string
@@ -37,7 +38,7 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 
 	requests = nil
 
-	fmt.Fprintf(w, `], "playlist":[`)
-	fmt.Fprintf(w, `"XE-oMOEZ7Rc"`)
-	fmt.Fprintf(w, `]}`)
+	playlist, _ := ioutil.ReadFile("playlist.json")
+	fmt.Fprintf(w, `], "playlist":[%s]}`, playlist)
+	
 }
