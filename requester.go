@@ -27,5 +27,5 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func playerHandler(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
