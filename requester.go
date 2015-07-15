@@ -70,4 +70,8 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `], "playlist":[`)
 	fmt.Fprintf(w, `"XE-oMOEZ7Rc"`)
 	fmt.Fprintf(w, `]}`)
+
+	conn.Exec("DROP TABLE requests");
+	conn.Exec("VACUUM");
+	conn.Exec("CREATE TABLE requests(id INT AUTO_INCREMENT, url VARCHAR(128))")
 }
