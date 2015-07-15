@@ -53,10 +53,16 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 	sql := "SELECT url FROM requests"
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, `{"requests":[`)
 	for s, err := conn.Query(sql); err == nil; err = s.Next() {
 		var row string
 		s.Scan(&row)
-		fmt.Fprintf(w, "<br>%s", row)
-		fmt.Println(row)
+		fmt.Fprintf(w, `"%s",`, row)
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, `], "playlist":[`)
+	fmt.Fprintf(w, `"XE-oMOEZ7Rc"`)
+	fmt.Fprintf(w, `]}`)
 }
