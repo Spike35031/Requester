@@ -30,7 +30,7 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `{"requests":[`)
 	for i := 0; i < len(requests); i++ {
 		fmt.Fprintf(w, `"%s"`, requests[i])
-		if (i == len(requests) - 1) {
+		if (i != len(requests) - 1) {
 			fmt.Fprintf(w, ", ")
 		}
 	}
