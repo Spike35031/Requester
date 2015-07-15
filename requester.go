@@ -62,8 +62,9 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 		s.Scan(&row)
 		fmt.Fprintf(w, `"%s"`, row)
 		if (!first) {
-			fmt.Fprintf(w, ",")
+			fmt.Fprintf(w, ", ")
 		}
+		first = false;
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, `], "playlist":[`)
