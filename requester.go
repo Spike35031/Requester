@@ -56,10 +56,14 @@ func playerHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, `{"requests":[`)
+	var first = true
 	for s, err := conn.Query(sql); err == nil; err = s.Next() {
 		var row string
 		s.Scan(&row)
-		fmt.Fprintf(w, `"%s",`, row)
+		fmt.Fprintf(w, `"%s"`, row)
+		if (!first) {
+			fmt.Fprintf(w, ",")
+		}
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, `], "playlist":[`)
